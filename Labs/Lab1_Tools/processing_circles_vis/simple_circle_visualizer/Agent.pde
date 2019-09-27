@@ -38,7 +38,7 @@ class Agent{
   
   void planning(float t){
     this.posX=this.centerX + this.dist*(float)Math.cos(t*this.omegaX+this.phiX);
-    this.posY=this.centerY + this.dist*(float)Math.cos(t*this.omegaX+this.phiY);   
+    this.posY=this.centerY + this.dist*(float)Math.sin(t*this.omegaY+this.phiY);   
   }
   
   void action(float t){

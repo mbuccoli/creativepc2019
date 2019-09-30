@@ -12,7 +12,7 @@ class Agent{
     this.location = new NetAddress("127.0.0.1",PORT);
   }  
   void reasoning(){ 
-    this.freq=map(mouseX, 0, width, range_freq[0], range_freq[1]);
+    this.freq=pow(2, map(mouseX, 0, width, logLeftFreq, logRightFreq));
     this.amp=map(mouseY, 0, height, 1, 0);    
   }  
   void planning(){;

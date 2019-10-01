@@ -80,7 +80,7 @@ class AgentSlide{
     
   }  
   void reasoning(){ ;
-    this.freq= this.pix2notes[mouseX];
+    this.freq= this.pix2notes[min(mouseX, width)];
   }  
   void planning(){;
   }  

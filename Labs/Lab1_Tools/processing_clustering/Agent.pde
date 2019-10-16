@@ -73,7 +73,7 @@ class Agent{
     
         
         //fill();
-        ellipse(this.cX[i], this.cY[i], RADIUS, RADIUS);
+        circle(this.cX[i], this.cY[i], RADIUS);
      }  
   
   }

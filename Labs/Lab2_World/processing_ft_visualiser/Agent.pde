@@ -18,8 +18,12 @@ float compute_flatness(FFT fft, float sum_of_spectrum){
 
 float compute_centroid(FFT fft, float sum_of_spectrum, 
                                         float[] freqs){
-   float centroid= random(-1000,1000);
-    return centroid;
+   float centroid = 0.;//random(-1000,1000); // initialize to 0
+   for(int i=0; i<fft.specSize(); i++){
+     centroid += fft.getBand(i)*freqs[i];
+   }   
+   
+   return centroid/sum_of_spectrum;
 }
 
 float compute_spread(FFT fft, float centroid, float sum_of_bands, float[] freqs){

@@ -2,7 +2,7 @@ import time
 import numpy as np
 from pythonosc import udp_client
 from threading import Thread, Event
-from algorithms import simple_next
+from algorithms import simple_next, arpeggio_next
 import sys
 
 def note_sleep(BPM, beats):
@@ -59,7 +59,9 @@ class Agent(Thread):
 if __name__=="__main__":
 	n_agents=1
 	agents=[_ for _ in range(n_agents)]
-	agents[0] = Agent(57120, "/moog", 60, simple_next)
+	#agents[0] = Agent(57120, "/moog", 60, simple_next)
+	agents[0] = Agent(57120, "/moog", 60, arpeggio_next)
+
 	for agent in agents:
 		agent.start()
 	#agent.join()

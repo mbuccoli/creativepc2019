@@ -14,7 +14,9 @@ SynthDef("moog", {
 
 // offline test
 (var instr = Synth(\moog);
-instr.set(\amp,1);)
+instr.set(\amp,1);
+instr.set(\midinote,48);
+)
 
 
 //set the server
@@ -30,11 +32,13 @@ OSCdef('OSCreceiver',
 
 		var midinote=msg[1];
 		var amp=msg[2];
-		freq.postln;
+		midinote.postln;
 		instr.set(\midinote,midinote, \amp, amp);
 	},
+
 	"/moog");
 )
+
 
 
 

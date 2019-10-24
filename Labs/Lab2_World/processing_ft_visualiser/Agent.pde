@@ -12,33 +12,52 @@ float[] create_zero_buffer(){
   return buffer;
 }
 float compute_flatness(FFT fft, float sum_of_spectrum){  
-  float flatness= random(-1000,1000);
-  return flatness;
+ 
+  // using several products will get overflow;
+  // so instead of computing the harmonic mean, 
+  // we compute the exponential of the average of the logarithms
+   float sum_of_logs = 0;    
+   float flatness;
+   for(int i = 0; i < fft.specSize(); i++)
+   {
+     sum_of_logs += log(fft.getBand(i));      
+   }
+   flatness = exp(sum_of_logs/fft.specSize()) / 
+                 (sum_of_spectrum/fft.specSize());
+   return flatness;
 }
 
 float compute_centroid(FFT fft, float sum_of_spectrum, 
                                         float[] freqs){
-   float centroid = 0.;//random(-1000,1000); // initialize to 0
-   for(int i=0; i<fft.specSize(); i++){
-     centroid += fft.getBand(i)*freqs[i];
-   }   
-   
-   return centroid/sum_of_spectrum;
+   float centroid=0;
+    for(int i = 0; i < fft.specSize(); i++){
+      centroid += freqs[i]*fft.getBand(i);
+    }
+    return centroid/sum_of_spectrum;
 }
 
 float compute_spread(FFT fft, float centroid, float sum_of_bands, float[] freqs){
-  float spread= random(-1000,1000);  
-  return spread;
+  float spread=0;
+  for (int i=0; i<fft.specSize(); i++){
+     spread+= pow(freqs[i]-centroid,2)*fft.getBand(i);
+  }
+  return sqrt(spread/sum_of_bands);
 }
 
 float compute_skewness(FFT fft, float centroid, float spread, float[] freqs){
-  float skewness= random(-1000,1000);
-  return skewness;
+  float skewness=0;
+  for (int i=0; i<fft.specSize(); i++){
+     skewness+= pow(freqs[i]-centroid,3)*fft.getBand(i);
+  }
+  return skewness/(fft.specSize()*pow(spread,3));
 }
 
 float compute_entropy(FFT fft){
-  float entropy = random(-1000,1000);
-  return entropy;
+  float entropy =0;
+  for (int i=0; i<fft.specSize(); i++){
+     entropy+= fft.getBand(i)*log(fft.getBand(i));
+  }
+  return entropy/log(fft.specSize());
 }
 
 float compute_sum_of_spectrum(FFT fft){
@@ -195,9 +214,13 @@ class AgentDrawer{
     this.minFeatures = new float[numFeatures];
   }
   void action(){
-    float[] values = {this.feat.energy, this.feat.centroid, 
-             this.feat.spread, this.feat.skewness,
-             this.feat.entropy, this.feat.flatness};    
+    float[] values=new float[this.numFeatures];
+    values[0]=this.feat.energy;
+    values[1]=this.feat.centroid;
+    values[2]=this.feat.spread;
+    values[3]=this.feat.skewness;
+    values[4]=this.feat.entropy;
+    values[5]=this.feat.flatness;
     int aboveSpace=MARGIN;    
     float x;
     textSize((int)this.heightFeatures);
@@ -211,7 +234,7 @@ class AgentDrawer{
             this.minFeatures[i]=values[i];}    
         x=map(values[i], this.minFeatures[i], this.maxFeatures[i], 0, this.maxWidth);
         rect(this.marginLeft, aboveSpace,  x, this.heightFeatures); 
-        
+        //println(i, values[i], x, aboveSpace);
     }
   
   }

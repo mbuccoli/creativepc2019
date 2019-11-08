@@ -22,7 +22,7 @@ SynthDef(\risset, { arg out= 0, pan= 0, note= 44, amp= 0.1, dur= 2, t_trig=1;
 
 // minor Scale
 var scale = [60,62,64,65,67,69,71,72,74,76,77,79,81,83,84,86,88,89,91,93,95],
-pattern = [1,3,-2,2],
+pattern = [1,-3,-2,5],
 noteIdx,
 halt = 5,
 state = 1,
@@ -83,7 +83,7 @@ p = Pbind(
         // MIDI note numbers -- converted automatically to Hz
 	\note, Pseq(composition, 1),
         // rhythmic values
-	\dur, 2,
+	\dur, 1,
 	\pan, 0,
 ).play;
 

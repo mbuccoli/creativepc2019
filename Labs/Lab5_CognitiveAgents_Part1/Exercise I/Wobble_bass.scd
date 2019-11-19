@@ -5,7 +5,7 @@ s.boot
 
 ServerOptions.outDevices;
 
-s.options.outDevice_('Altoparlanti MacBook Pro');
+//s.options.outDevice_('Altoparlanti MacBook Pro');
 
 
 

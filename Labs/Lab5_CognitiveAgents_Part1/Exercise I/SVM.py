@@ -49,30 +49,31 @@ def load_data(class_a_path, class_b_path):
 
 def train_svm():
 	# Load data
-	# class_names = ...
-	
-	# images, images_vector, labels =
+	class_names = ['a', 'b']
 
-	# pca = ...
-	# svc =  ...
-	# model = ...
+	images, images_vector, labels = load_data(class_a_path='images/class_a/', class_b_path='images/class_b/')
 
-	# xtrain, xtest, ytrain, ytest = ...
+	pca = PCA(n_components=150, svd_solver='randomized', whiten=True, random_state=42)
+	svc = SVC(kernel='rbf', class_weight='balanced')
+	model = make_pipeline(pca, svc)
 
-	# param_grid = ...
-	# grid = ...
+	xtrain, xtest, ytrain, ytest = train_test_split(images_vector, labels, random_state=42)
+
+	param_grid = {'svc__C': [1, 5, 10, 50], 'svc__gamma': [0.0001, 0.0005, 0.001, 0.005]}
+	grid = GridSearchCV(model, param_grid)
 
 	print('Fit the SVM model')
+	grid.fit(xtrain, ytrain)
+	print(grid.best_params_)
 
-	# Fit the SVM model
-	# ..
-
-	# Generate best model
-	# model =
+	model = grid.best_estimator_
 
 	# Save the model
-	# ...
+	dump(model, 'modelSVM.joblib')
 
-	# return model
+	return model
 
 
+#yfit = model.predict(xtest)
+
+#	print(classification_report(ytest, yfit, target_names=class_names))

@@ -5,8 +5,6 @@ s.boot
 
 ServerOptions.outDevices;
 
-//s.options.outDevice_('Altoparlanti MacBook Pro');
-
 
 
 
@@ -15,25 +13,20 @@ ServerOptions.outDevices;
 SynthDef(\dubstep, { arg note = 50, gate = 1,dur=2, detune = 0.01, lfo = 0, amp = 0;
 	var trig, son, sweep, out, freq;
 
-	// convert midi to frequency
 	freq = note.midicps;
 
-	// load trigger
 	trig = CoinGate.kr(0.5, Impulse.kr(2));
 
-	// sweep regulated by lfo
 	sweep = Poll.kr(trig,LFSaw.ar(lfo).exprange(40, 5000));   /// Inf: number of different values to produce
 
 
-	// wobble bass
+
 	son = Mix.ar(LFSaw.ar(freq * [1-detune, 1, 1+detune]));
     son = LPF.ar(son, sweep);
     out = son + BPF.ar(son, 2000, 2);
 
-	// envelope
 	a = EnvGen.ar(Env.asr(0.01,1,dur),gate:gate,doneAction:2);
 
-	// Output
 	Out.ar(0, amp*Pan2.ar(FreeVerb.ar(out*a,room:0.3),0));
 }).add;
 )
@@ -52,35 +45,41 @@ h.set(\lfo,0);
 
 // start communication with hand_detector client
 
+
 (
 x = OSCFunc( { | msg, time, addr, port |
     var pyFreq,pyAmp,pyDetune,pyLfo;
-	// Stop and free synthesizer
 
+	// Handle end of sound
 	if (msg[1] =='stop'){
-		//...
+		h.free
 	}
 	{
 		// handle class A message (freq and amplitude)
 		if (msg[1]=='a'){
 			// Parse message
-			//...
-			//...
+			pyFreq = msg[2].asFloat;
+			pyAmp  = msg[3].asFloat;
+			( "freq is " + pyFreq ).postln;
+			( "amp is " + pyAmp ).postln;
 
 			// set parameters
-			 //...
-			//...
+			 h.set( \note, pyFreq );
+			 h.set( \amp, pyAmp );
 		};
 		// handle class B message (detune and lfo)
 		if (msg[1]=='b'){
-			/
-			// Parse message
-			//...
-			//...
+			// parse message
+			pyDetune = msg[2].asFloat;
+			pyLfo = msg[3].asFloat;
+
+			// print info
+			( "Detuning is " + pyDetune ).postln;
+			( "lfo is " + pyLfo ).postln;
 
 			// set parameters
-			 //...
-			//...
+			 h.set( \detune, pyDetune );
+			 h.set( \lfo, pyLfo );
 		};
 
 	};

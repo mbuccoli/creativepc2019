@@ -4,11 +4,10 @@ import cv2
 import os
 import numpy as np
 from sklearn.svm import SVR
-from sklearn.decomposition import PCA
+from sklearn.decomposition import PCA as RandomizedPCA
 from sklearn.pipeline import make_pipeline
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
-from sklearn.model_selection import GridSearchCV
 from joblib import dump
 
 
@@ -59,31 +58,33 @@ def load_data(class_1_path, class_2_path,class_3_path):
 
 
 def train_svr():
-	# Load data
-	# class_names =
-	
-	# images, images_vector, labels =
+    # Load data
+    class_names = ['1', '2', '3']
 
-	# pca =
-	# model =
+    images, images_vector, labels = load_data(class_1_path='images/class_1/',
+                                              class_2_path='images/class_2/',
+                                              class_3_path='images/class_3/')
 
-	# xtrain, xtest, ytrain, ytest =
+    pca = RandomizedPCA(n_components=150, svd_solver='randomized', whiten=True, random_state=42)
+    svr = SVR(kernel='rbf')
+    model = make_pipeline(pca, svr)
 
-	# Grid of parameters
-	# param_grid =
-	# grid =
+    Xtrain, Xtest, ytrain, ytest = train_test_split(images_vector, labels,
+                                                    random_state=42)
 
-	#print('Fit the SVR model')
+    from sklearn.model_selection import learning_curve, GridSearchCV
+    param_grid = {'svr__C': [1, 5, 10, 50],
+                  'svr__gamma': [0.0001, 0.0005, 0.001, 0.005]}
+    grid = GridSearchCV(model, param_grid)
 
-	#
+    grid.fit(Xtrain, ytrain)
 
-    # Generate the model
-	# model
+    model = grid.best_estimator_
 
-	# Save the model
+    # Save the model
+    dump(model, 'modelSVR.joblib')
 
 
-
-	# return model
+    return model
 
 

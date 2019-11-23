@@ -7,8 +7,8 @@ OscMessage msg;
 
 int port = 12000;
 
-float x = 1270.0;
-float y = 720.0;
+float x ;
+float y;
 
 
 ParticleSystem ps;
@@ -18,7 +18,7 @@ void setup(){
   ps=new ParticleSystem();
   
   /* start oscP5, listening for incoming messages at port 12000 */
-  //...
+  oscP5 = new OscP5(this, port);
   
   for(int p=0; p<Nparticles; p++){
     ps.addParticle();
@@ -38,6 +38,12 @@ void draw(){
     
     /* incoming osc message are forwarded to the oscEvent method. */
 void oscEvent(OscMessage message) {
-  //...
-  
+  message.print();
+  if(message.checkAddrPattern("/coords")==true) {
+    /* check if the typetag is the right one. -> expecting float (pitch),float (roll), float (yaw)*/
+    //if(message.checkTypetag("ff")) {
+      x = message.get(0).floatValue();
+      y  = message.get(1).floatValue();
+    //}
+  }
 }

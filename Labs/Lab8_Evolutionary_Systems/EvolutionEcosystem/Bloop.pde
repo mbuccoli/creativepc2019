@@ -30,8 +30,8 @@ class Bloop {
     dna = dna_;
     // Gene 0 determines maxspeed and r
     // The bigger the bloop, the slower it is
-    // maxspeed = ... 
-    // r =... 
+    maxspeed = map(dna.genes[0], 0, 1, 15, 0);
+    r = map(dna.genes[0], 0, 1, 0, 50);
     
   }
 
@@ -49,40 +49,43 @@ class Bloop {
       PVector foodposition = food.get(i);
       float d = PVector.dist(position, foodposition);
       // If we are, juice up our strength!
-      //..
-        //health += 
+      if (d < r/2) {
+        health += 100; 
         
-        // remove food 
+        food.remove(i);
       
-        /************************** OSC message to supercollider
-        OscMessage msg = 
+        OscMessage msg = new OscMessage("/synth_control");
         
         // map idx of the scale
-        //...
+        msg.add(int(map(dna.genes[0],0,1,0,7)));
         
         // map reverb mix
-        //...
-        
+        msg.add(dna.genes[0]);
         // map reverb room
-        //...
+        msg.add(dna.genes[0]);
         
-        // send message
-        //...
-        *************************/
-      //...
+        oscP5.send(msg, location);
+        
+        
+        print(int(map(dna.genes[0],0,1,0,7)));
+    
+      }
     }
   }
 
   // At any moment there is a teeny, tiny chance a bloop will reproduce
   Bloop reproduce() {
     // asexual reproduction
-   //...
+    if (random(1) < 0.0005) {
       // Child is exact copy of single parent
-   //...
+      DNA childDNA = dna.copy();
       // Child DNA can mutate
-      //...
-     //..
-    //...
+      childDNA.mutate(0.01);
+      return new Bloop(position, childDNA);
+    } 
+    else {
+      return null;
+    }
   }
 
   // Method to update position
@@ -107,17 +110,21 @@ class Bloop {
     if (position.y > height+r) position.y = -r;
   }
 
-
   // Method to display
   void display() {
     ellipseMode(CENTER);
     stroke(0,health);
-    //fill(0, health);
+    fill(0, health);
     ellipse(position.x, position.y, r, r);
   }
 
   // Death
   boolean dead() {
-    //...
+    if (health < 0.0) {
+      return true;
+    } 
+    else {
+      return false;
+    }
   }
 }

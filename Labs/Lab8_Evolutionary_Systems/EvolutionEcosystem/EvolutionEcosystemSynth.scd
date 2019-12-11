@@ -1,8 +1,8 @@
 
 // Start the server
 
-//ServerOptions.outDevices;
-//Server.default.options.outDevice_("Dispositivo con uscite multiple");
+ServerOptions.outDevices;
+Server.default.options.outDevice_("Dispositivo con uscite multiple");
 s.boot
 // Synth definition
 (
@@ -16,15 +16,14 @@ SynthDef(\SimpleNote,
 	reverb_sound = FreeVerb.ar(sound,mix,room,0.5);
 		Out.ar([0,1],reverb_sound*EnvGen.kr(env, doneAction: Done.freeSelf))
 
+
 }).add;
 )
 
 // synth running example just to hear it
 (
 a=7.rand;
-b = Scale
-
-.hijaz;
+b = Scale.hijaz;
 c = 60;
 d = Scale.hijaz;
 e = (b[a]+ c).midicps ;
@@ -40,14 +39,13 @@ NetAddr("127.0.0.1",57120);
 x = OSCFunc( { | msg, time, addr, port |
     var pyIdx, pyRoom,pyMix, scale, offset, freq;
 	// Parse message
-	//..
-	//..
-	//..
+	pyIdx= msg[1].asFloat; // Idx of note on the scale
+	pyMix= msg[2].asFloat; // Reverb mix
+	pyRoom= msg[2].asFloat; // Room size (reverb)
 
-	// .. map scale
-	//offset = ... ; // midi note offset
-	//scale = ... ;// selected scale
-	//freq = ... ;// frequency corresponding to note
+	offset = 60; // midi note offset
+	scale = Scale.hijaz; // selected scale
+	freq = (scale[pyIdx]+ offset).midicps; // frequency corresponding to note
 
 	// Play the synth!!!
 	Synth(\SimpleNote,[freq:freq,mix:pyMix,room:pyRoom]);
